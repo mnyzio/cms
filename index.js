@@ -3,9 +3,19 @@ const inquirer = require('inquirer');
 const showWelcomeScreen = require('./logo');
 const { 
         viewAllDepartments,
+        getDepartmentNames,                
+        addDepartmentMenu,
+        addDepartment,
+      } = require('./queries/departmentQueries');
+
+const {
         viewAllRoles,
-        viewAllEmployees 
-      } = require('./queries');
+      } = require('./queries/roleQueries');
+
+const {
+        viewAllEmployees,
+      } = require('./queries/employeeQueries')
+
 
 // Display logo on start
 showWelcomeScreen(); 
@@ -55,8 +65,9 @@ function mainPrompt () {
             mainPrompt();
             }).catch(err => console.log(err)); 
           break;
-
-
+        case 'Add a department':          
+          addDepartmentPrompt();              
+          break;
 
         case 'Exit':
           process.exit();
@@ -64,6 +75,32 @@ function mainPrompt () {
       
     })
     .catch(err => console.log(err))
+}
+
+
+
+
+async function addDepartmentPrompt() {
+  await addDepartmentMenu();  
+  return inquirer
+    .prompt([
+      {
+        type: 'input',
+        name: 'newDepartment',
+        message: 'Enter department name:',
+      }
+    ])
+    .then(({ newDepartment }) => {
+      getDepartmentNames().then(arrayOfDeptNames => {        
+        if ( arrayOfDeptNames.includes(newDepartment.toUpperCase()) ) {
+          console.log("Department already exists. Department could not be added.");          
+        } else {
+          addDepartment(newDepartment);          
+          console.log(`Department ${newDepartment} added successfully.`);          
+          mainPrompt();
+        }
+      })      
+    })    
 }
 
 mainPrompt();

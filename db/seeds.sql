@@ -1,39 +1,39 @@
 INSERT INTO department (name)
 VALUES 
-    ('Engineering'),
-    ('Finance'),
-    ('Legal'),
-    ('Human Resources'),
-    ('Sales'),
+    ('ENGINEERING'),    
+    ('FINANCE'),
+    ('LEGAL'),
+    ('HUMAN RESOURCES'),
+    ('SALES'),
     ('IT'),
-    ('Product Management'),
-    ('Manufacturing'),
-    ('Distribution');
+    ('PPRODUCT MANAGEMENT'),
+    ('MANUFACTURING'),
+    ('DISTRIBUTION');
 
 INSERT INTO role (title, salary, department_id) 
 VALUES
-    ('Software Engineer', 80000, 1),
-    ('Data Engineer', 85000, 1),
-    ('Account Manager', 75000, 2),
-    ('Accountant', 60000, 2),
-    ('Lawyer', 120000, 3),
-    ('Benefits Coordinator', 55000, 4),
-    ('HR Manager', 80000, 4),
-    ('Sales Associate', 55000, 5),
-    ('Sales Manager', 82000, 5),
-    ('Network Technitian', 73000, 6),
-    ('Help Desk Support', 52000, 6),
-    ('Product Manager', 87000, 7),
-    ('Machine Operator', 47000, 8),
-    ('Quality Controller', 52000, 8),
-    ('Warehouse Associate', 44000, 9),
-    ('Operations Manager', 98000, 9),
-    ('Warehouse Supervisor', 67000, 9),
-    ('Logistics Manager', 72000, 9);
+    ('SOFTWARE ENGINEER', 80000, 1),
+    ('DATA ENGINEER', 85000, 1),
+    ('ACCOUNT MANAGER', 75000, 2),
+    ('ACCOUNTANT', 60000, 2),
+    ('LAWYER', 120000, 3),
+    ('BENEFITS COORDINATOR', 55000, 4),
+    ('HR MANAGER', 80000, 4),
+    ('SALES ASSOCIATE', 55000, 5),
+    ('SALES MANAGER', 82000, 5),
+    ('NETWORK TECHNITIAN', 73000, 6),
+    ('HELP DESK SUPPORT', 52000, 6),
+    ('PRODUCT MANAGER', 87000, 7),
+    ('MACHINE OPERATOR', 47000, 8),
+    ('QUALITY CONTROLLER', 52000, 8),
+    ('WAREHOUSE ASSOCIATE', 44000, 9),
+    ('OPERATIONS MANAGER', 98000, 9),
+    ('WAREHOUSE SUPERVISOR', 67000, 9),
+    ('LOGISTICS MANAGER', 72000, 9);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES 
-     ('John', 'Doe', 1, null),
-     ('John', 'Smith', 1, 1),
+     ('JOHN', 'DOE', 1, null),
+     ('JOHN', 'SMITH', 1, 1);
 
 
