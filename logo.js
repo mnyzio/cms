@@ -1,5 +1,6 @@
 // Display CMS logo
 function showWelcomeScreen() {
+    console.clear();
     console.log(`
 ____________________________________________________________________________________________________
 |                                                                                                   |
