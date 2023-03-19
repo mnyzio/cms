@@ -31,7 +31,9 @@ VALUES
     ('Warehouse Supervisor', 67000, 9),
     ('Logistics Manager', 72000, 9);
 
--- INSERT INTO employee (first_name, last_name, role_id, manager_id)
--- VALUES 
---     ('John', 'Doe', 1, )
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES 
+     ('John', 'Doe', 1, null),
+     ('John', 'Smith', 1, 1),
+
 
