@@ -1,7 +1,10 @@
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const showWelcomeScreen = require('./logo');
-const { viewAllDepartments } = require('./queries');
+const { 
+        viewAllDepartments,
+        viewAllRoles 
+      } = require('./queries');
 
 // Display logo on start
 showWelcomeScreen(); 
@@ -31,7 +34,12 @@ function mainPrompt () {
             console.table(results[0]);
             mainPrompt();
         }).catch(err => console.log(err));          
-          break;          
+          break;   
+        case 'View all roles':
+          viewAllRoles().then(function (results) {
+            console.table(results[0]);
+            mainPrompt();
+        }).catch(err => console.log(err));     
       }   
       
     })
