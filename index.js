@@ -16,6 +16,7 @@ function mainPrompt () {
         type: 'list',
         name: 'main',
         message: 'What would you like to do?',
+        loop: false,
         choices: [
           'View all departments',
           'View all roles',
@@ -23,7 +24,8 @@ function mainPrompt () {
           'Add a department',
           'Add a role',
           'Add an employee',
-          'Update an employee role'
+          'Update an employee role',
+          'Exit'
         ]
       }
     ])
@@ -39,7 +41,10 @@ function mainPrompt () {
           viewAllRoles().then(function (results) {
             console.table(results[0]);
             mainPrompt();
-        }).catch(err => console.log(err));     
+        }).catch(err => console.log(err)); 
+        
+        case 'Exit':
+          process.exit();
       }   
       
     })
