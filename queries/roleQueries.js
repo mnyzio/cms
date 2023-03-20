@@ -1,8 +1,7 @@
 const db = require('../connection');
 
 // Header and query that displays all roles, their id, title, salary and departments they belong to
-function viewAllRoles() {
-    console.clear();
+function viewAllRoles() {    
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                               ROLES                                              |
@@ -11,7 +10,7 @@ function viewAllRoles() {
     return db.promise().query(`
     SELECT role.id AS ID, 
         role.title AS TITLE, 
-        role.salary AS SALARY, 
+        concat('$',role.salary) AS SALARY, 
         department.name AS DEPARTMENT 
     FROM role
     JOIN department ON role.department_id = department.id

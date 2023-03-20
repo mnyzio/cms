@@ -1,8 +1,7 @@
 const db = require('../connection');
 
 // Header and query that displays all emplyees, their id, first name, last name, title, salary, department and manager if any
-function viewAllEmployees() {
-    console.clear();
+function viewAllEmployees() {    
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                            EMPLOYEES                                             |
