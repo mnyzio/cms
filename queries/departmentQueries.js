@@ -10,10 +10,12 @@ function viewAllDepartments() {
     return db.promise().query(`SELECT * FROM department ORDER BY name;`);
 }
 
+
 // Function that returns anly department names
 function getDepartmentNames() {
     return db.promise().query(`SELECT name FROM department;`);
 }
+
 
 // Header and query that displays all emplyees, their id, first name, last name, title, salary, department and manager if any
 function addDepartmentMenu() {    
@@ -24,12 +26,27 @@ function addDepartmentMenu() {
 `)
 }
 
+
 // Function that adds new department to database
 function addDepartment(department) {
     return db.promise().query(`
     INSERT INTO department (name)
     VALUES (?)`, department.toUpperCase());
 }
+
+
+// Function that sums up all salaries for a single department
+function utilizedBudgetSingleDepartment(department) {
+    return db.promise().query(`
+    SELECT 
+	    department.name AS DEPARTMENT, 
+	    CASE WHEN SUM(role.salary) IS NULL THEN '$0'
+        ELSE concat('$',SUM(role.salary)) END AS 'UTILIZED BUDGET' 
+    FROM department 
+    LEFT JOIN role ON department.id = role.department_id
+    WHERE department.name = ?;`, department);
+}
+
 
 // Function that sums up all salaries per department
 function utilizedBudgetAllDepartments() {
@@ -52,6 +69,7 @@ function utilizedBudgetAllDepartments() {
     `)    
 }
 
+
 // Function that total utilized budget
 function utilizedBudgetTotal() {
     console.log('\x1b[32m%s\x1b[0m', `
@@ -72,6 +90,7 @@ module.exports = {
     getDepartmentNames,    
     addDepartmentMenu,
     addDepartment, 
+    utilizedBudgetSingleDepartment,
     utilizedBudgetAllDepartments,
     utilizedBudgetTotal,
 };

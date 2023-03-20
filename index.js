@@ -6,6 +6,7 @@ const {
         getDepartmentNames,                
         addDepartmentMenu,
         addDepartment,
+        utilizedBudgetSingleDepartment,
         utilizedBudgetAllDepartments,
         utilizedBudgetTotal,
       } = require('./queries/departmentQueries');
@@ -47,7 +48,7 @@ function mainPrompt () {
           'View employees by manager - bonus 2 points',
           'View employees by department - bonus 2 points',
           'Delete departments, roles, and employees - bonus 2 points each',
-          'View the total utilized budget of a department - bonus 8 points',
+          'View utilized budget of a department - single department',
           'View utilized budget - all departments',
           'View utilized budget - total',
           'Exit'
@@ -78,14 +79,37 @@ function mainPrompt () {
             }).catch(err => console.log(err)); 
           break;
         case 'Add a department':          
-          addDepartmentPrompt();              
+          addDepartmentPrompt().then(({ newDepartment }) => {
+            getDepartmentNames().then(arrayOfDeptNames => {        
+              let found = false;
+              arrayOfDeptNames[0].forEach(element => {
+                if (element.name === newDepartment.toUpperCase()) {            
+                  found = true;
+                  return;
+                };          
+              });        
+              if (found) {
+                console.log("\x1b[31m%s\x1b[0m", `\n Department '${newDepartment.toUpperCase()}' already exists. Operation could not be completed. \n`);            
+              } else {
+                addDepartment(newDepartment);          
+                console.log(`Department ${newDepartment} added successfully.`);    
+                console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")              
+              }
+              mainPrompt();
+            })
+          });              
           break;
 
 
-
-
-
-
+        case 'View utilized budget of a department - single department':
+          selectDepartmentPrompt().then(({selectedDeptartment}) => {
+            utilizedBudgetSingleDepartment(selectedDeptartment).then(results => {
+            console.table(results[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+            mainPrompt();
+            }).catch(err => console.log(err));                    
+          }).catch(err => console.log(err));                    
+          break;        
         case 'View utilized budget - all departments':
           utilizedBudgetAllDepartments().then(function(results) {
             console.table(results[0]);
@@ -122,27 +146,28 @@ function addDepartmentPrompt() {
         name: 'newDepartment',
         message: 'Enter department name:',
       }
-    ])
-    .then(({ newDepartment }) => {
-      getDepartmentNames().then(arrayOfDeptNames => {        
-        let found = false;
-        arrayOfDeptNames[0].forEach(element => {
-          if (element.name === newDepartment.toUpperCase()) {            
-            found = true;
-            return;
-          };          
-        });        
-        if (found) {
-          console.log("\x1b[31m%s\x1b[0m", `\n Department '${newDepartment.toUpperCase()}' already exists. Operation could not be completed. \n`);            
-        } else {
-          addDepartment(newDepartment);          
-          console.log(`Department ${newDepartment} added successfully.`);    
-          console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")              
-        }
-        mainPrompt();
-      })
-    })
+    ])    
 }      
+
+// Function that displays available departments for user to select from
+async function selectDepartmentPrompt() {
+  const validDepartments = [];
+  await getDepartmentNames().then(arrayOfDeptNames => {
+    arrayOfDeptNames[0].forEach(element => {
+    validDepartments.push(element.name);
+    });    
+  });
+  return inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'selectedDeptartment',
+        message: 'Select department:',
+        loop: false,
+        choices: validDepartments
+      }
+    ])
+}
 
 
 mainPrompt();
