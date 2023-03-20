@@ -23,6 +23,11 @@ const {
 showWelcomeScreen(); 
 
 function mainPrompt () {
+  console.log('\x1b[33m%s\x1b[0m',`
++--------------------------------------------------------------------------------------------------+
+|                                           MAIN MENU                                              |
++--------------------------------------------------------------------------------------------------+
+`)
   return inquirer
     .prompt([
       {
@@ -54,18 +59,21 @@ function mainPrompt () {
         case 'View all departments':
           viewAllDepartments().then(function (results) {
             console.table(results[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
             }).catch(err => console.log(err));          
           break;   
         case 'View all roles':
           viewAllRoles().then(function (results) {
             console.table(results[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
             }).catch(err => console.log(err)); 
           break;
         case 'View all employees':
           viewAllEmployees().then(function (results) {
             console.table(results[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
             }).catch(err => console.log(err)); 
           break;
@@ -81,12 +89,14 @@ function mainPrompt () {
         case 'View utilized budget - all departments':
           utilizedBudgetAllDepartments().then(function(results) {
             console.table(results[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
           }).catch(err => console.log(err));          
           break;
         case 'View utilized budget - total':
           utilizedBudgetTotal().then(function(result) {
             console.table(result[0]);
+            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
           }).catch(err => console.log(err));          
           break
@@ -115,18 +125,23 @@ function addDepartmentPrompt() {
     ])
     .then(({ newDepartment }) => {
       getDepartmentNames().then(arrayOfDeptNames => {        
-        // console.log("🚀 ~ file: index.js:95 ~ getDepartmentNames ~ arrayOfDeptNames:", arrayOfDeptNames)
-        // arrayOfDeptNames[0].forEach(element => {
-        //   if (element.name === newDepartment.toUpperCase()) {
-        //     console.log("Department already exists. Department could not be added.");            
-        //     mainPrompt();
-        //   };          
-        // });         
-        addDepartment(newDepartment);          
-        console.log(`Department ${newDepartment} added successfully.`);          
+        let found = false;
+        arrayOfDeptNames[0].forEach(element => {
+          if (element.name === newDepartment.toUpperCase()) {            
+            found = true;
+            return;
+          };          
+        });        
+        if (found) {
+          console.log("\x1b[31m%s\x1b[0m", `\n Department '${newDepartment.toUpperCase()}' already exists. Operation could not be completed. \n`);            
+        } else {
+          addDepartment(newDepartment);          
+          console.log(`Department ${newDepartment} added successfully.`);    
+          console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")              
+        }
         mainPrompt();
-        })
       })
+    })
 }      
 
 
