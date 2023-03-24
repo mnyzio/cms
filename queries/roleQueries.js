@@ -10,8 +10,8 @@ function viewAllRoles() {
     return db.promise().query(`
     SELECT role.id AS ID, 
         role.title AS TITLE, 
-        concat('$',role.salary) AS SALARY, 
-        department.name AS DEPARTMENT 
+        department.name AS DEPARTMENT, 
+        concat('$',role.salary) AS SALARY 
     FROM role
     JOIN department ON role.department_id = department.id
     ORDER BY department.name, role.title;`);

@@ -126,8 +126,7 @@ function mainPrompt () {
           break
         case 'Exit':
           process.exit();
-      }   
-      
+      }         
     })
     .catch(err => console.log(err))
 }
@@ -135,10 +134,8 @@ function mainPrompt () {
 
 
 
-// async function addDepartmentPrompt() {
-function addDepartmentPrompt() {
-  // await addDepartmentMenu();  
-  addDepartmentMenu();  
+async function addDepartmentPrompt() {
+  await addDepartmentMenu();  
   return inquirer
     .prompt([
       {
@@ -152,7 +149,7 @@ function addDepartmentPrompt() {
 // Function that displays available departments for user to select from
 async function selectDepartmentPrompt() {
   const validDepartments = [];
-  await getDepartmentNames().then(arrayOfDeptNames => {
+  await getDepartmentNames().then(arrayOfDeptNames => {   
     arrayOfDeptNames[0].forEach(element => {
     validDepartments.push(element.name);
     });    

@@ -13,6 +13,7 @@ function viewAllEmployees() {
         a.last_name AS "LAST NAME", 
         role.title AS TITLE, 
         department.name AS DEPARTMENT,
+        concat('$',role.salary) AS SALARY,
         concat(d.first_name,' ',d.last_name) AS MANAGER
     FROM employee a
     INNER JOIN role ON a.role_id = role.id
