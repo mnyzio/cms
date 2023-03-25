@@ -17,6 +17,16 @@ function viewAllRoles() {
     ORDER BY department.name, role.title;`);
 }
 
+
+function addRole(title, salary, deptName) {
+    db.query(`INSERT INTO role (title, salary, department_id) 
+    VALUES
+        (?, ?, (SELECT id FROM department WHERE name = ?))`, [title, salary, deptName]);
+}   
+
+
+
 module.exports = {
     viewAllRoles, 
+    addRole,
 }

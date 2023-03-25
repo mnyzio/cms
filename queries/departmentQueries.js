@@ -13,7 +13,7 @@ function viewAllDepartments() {
 
 // Function that returns anly department names
 function getDepartmentNames() {
-    return db.promise().query(`SELECT name FROM department;`);
+    return db.promise().query(`SELECT name FROM department ORDER BY name;`);
 }
 
 
@@ -29,7 +29,7 @@ function addDepartmentMenu() {
 
 // Function that adds new department to database
 function addDepartment(department) {
-    return db.promise().query(`
+    db.query(`
     INSERT INTO department (name)
     VALUES (?)`, department.toUpperCase());
 }
@@ -50,8 +50,10 @@ function utilizedBudgetSingleDepartment(department) {
                 WHEN e.id IS NULL THEN 0
                 ELSE r.salary END),'C')) AS 'UTILIZED BUDGET'        
     FROM department d
-    LEFT JOIN role r ON r.department_id = d.id
-    LEFT JOIN employee e ON e.role_id = r.id
+    LEFT JOIN role r 
+        ON r.department_id = d.id
+    LEFT JOIN employee e 
+        ON e.role_id = r.id
     WHERE d.name = ?
     GROUP BY d.name`, department);
 }
@@ -72,8 +74,10 @@ function utilizedBudgetAllDepartments() {
                 WHEN e.id IS NULL THEN 0
                 ELSE r.salary END),'C')) AS 'UTILIZED BUDGET'        
     FROM department d
-    LEFT JOIN role r ON r.department_id = d.id
-    LEFT JOIN employee e ON e.role_id = r.id
+    LEFT JOIN role r 
+        ON r.department_id = d.id
+    LEFT JOIN employee e 
+        ON e.role_id = r.id
     GROUP BY d.name
     ORDER BY d.name;
     `)    
@@ -92,10 +96,11 @@ function utilizedBudgetTotal() {
         CONCAT('$', 
             FORMAT(
                 SUM(CASE
-	                WHEN e.id IS NULL THEN 0
-                    ELSE r.salary END),'C')) AS 'TOTAL UTILIZED BUDGET'
+                    WHEN e.id IS NULL THEN 0
+                    ELSE r.salary END),'C')) AS 'UTILIZED BUDGET'
     FROM role r 
-    LEFT JOIN employee e ON r.id = e.role_id;
+    LEFT JOIN employee e 
+        ON r.id = e.role_id;
     `)
 }
 
@@ -104,7 +109,7 @@ function utilizedBudgetTotal() {
 
 module.exports = {
     viewAllDepartments, 
-    getDepartmentNames,    
+    getDepartmentNames, 
     addDepartmentMenu,
     addDepartment, 
     utilizedBudgetSingleDepartment,

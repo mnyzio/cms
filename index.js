@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const showWelcomeScreen = require('./logo');
 const { 
         viewAllDepartments,
-        getDepartmentNames,                
+        getDepartmentNames,        
         addDepartmentMenu,
         addDepartment,
         utilizedBudgetSingleDepartment,
@@ -13,6 +13,7 @@ const {
 
 const {
         viewAllRoles,
+        addRole,
       } = require('./queries/roleQueries');
 
 const {
@@ -57,6 +58,7 @@ function mainPrompt () {
     ])
     .then( ({ main }) => {
       switch (main) {
+
         case 'View all departments':
           viewAllDepartments().then(function (results) {
             console.table(results[0]);
@@ -64,6 +66,7 @@ function mainPrompt () {
             mainPrompt();
             }).catch(err => console.log(err));          
           break;   
+
         case 'View all roles':
           viewAllRoles().then(function (results) {
             console.table(results[0]);
@@ -71,6 +74,7 @@ function mainPrompt () {
             mainPrompt();
             }).catch(err => console.log(err)); 
           break;
+
         case 'View all employees':
           viewAllEmployees().then(function (results) {
             console.table(results[0]);
@@ -78,6 +82,7 @@ function mainPrompt () {
             mainPrompt();
             }).catch(err => console.log(err)); 
           break;
+
         case 'Add a department':          
           addDepartmentPrompt().then(({ newDepartment }) => {
             getDepartmentNames().then(arrayOfDeptNames => {        
@@ -100,6 +105,17 @@ function mainPrompt () {
           });              
           break;
 
+        case 'Add a role':
+          addRolePrompt().then( ({ roleName, roleSalary, roleDepartment }) => {
+            if (roleName && roleSalary && roleDepartment) {
+              addRole(roleName, parseInt(roleSalary), roleDepartment);              
+              console.log(`Role ${roleName} added successfully.`);    
+            } else {
+              console.log("\x1b[31m%s\x1b[0m", "\n Provided information was not complete. Operation could not be completed. \n")
+            };            
+            mainPrompt();
+          }).catch(err => console.log(err));                    
+          break;
 
         case 'View utilized budget of a department - single department':
           selectDepartmentPrompt().then(({selectedDeptartment}) => {
@@ -148,12 +164,8 @@ async function addDepartmentPrompt() {
 
 // Function that displays available departments for user to select from
 async function selectDepartmentPrompt() {
-  const validDepartments = [];
-  await getDepartmentNames().then(arrayOfDeptNames => {   
-    arrayOfDeptNames[0].forEach(element => {
-    validDepartments.push(element.name);
-    });    
-  });
+  const arrayOfDeptNames = await getDepartmentNames();
+  const validDepartments = arrayOfDeptNames[0].map(e => e);
   return inquirer
     .prompt([
       {
@@ -165,6 +177,34 @@ async function selectDepartmentPrompt() {
       }
     ])
 }
+
+
+// Function that displays prompts for steps required to add a role
+async function addRolePrompt() {
+  const arrayOfDeptNames = await getDepartmentNames();
+  const validDepartments = arrayOfDeptNames[0].map(e => e);
+  return inquirer
+    .prompt([
+      {
+        type: 'input',
+        name: 'roleName',
+        message: 'Enter title for new role:',        
+      },
+      {
+        type: 'input',
+        name: 'roleSalary',
+        message: 'Enter salary for new role:'
+      },
+      {
+        type: 'list',
+        name: 'roleDepartment',
+        message: 'Select department new role belongs to:',
+        loop: false,
+        choices: validDepartments
+      }
+    ])
+}
+
 
 
 mainPrompt();

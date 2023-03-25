@@ -1,4 +1,6 @@
 private/
+.vscode/
+
 
 # Logs
 logs

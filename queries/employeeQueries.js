@@ -13,7 +13,9 @@ function viewAllEmployees() {
         e.first_name AS 'FIRST NAME',
         e.last_name AS 'LAST NAME',
         r.title AS 'TITLE',
-        CONCAT('$', r.salary) AS 'SALARY',
+        d.name AS 'DEPARTMENT',
+        CONCAT('$', 
+            FORMAT(r.salary,'C')) AS 'SALARY',
         CONCAT(m.first_name,' ',m.last_name) AS 'MANAGER'
     FROM employee e
     LEFT JOIN employee m
