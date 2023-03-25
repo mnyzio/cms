@@ -8,17 +8,20 @@ function viewAllEmployees() {
 +--------------------------------------------------------------------------------------------------+
     `)
     return db.promise().query(`
-    SELECT a.id AS ID, 
-		a.first_name AS "FIRST NAME", 
-        a.last_name AS "LAST NAME", 
-        role.title AS TITLE, 
-        department.name AS DEPARTMENT,
-        concat('$',role.salary) AS SALARY,
-        concat(d.first_name,' ',d.last_name) AS MANAGER
-    FROM employee a
-    INNER JOIN role ON a.role_id = role.id
-    INNER JOIN department ON role.department_id = department.id
-    LEFT JOIN employee d ON d.manager_id = a.id;`);
+    SELECT 
+        e.id AS 'ID',
+        e.first_name AS 'FIRST NAME',
+        e.last_name AS 'LAST NAME',
+        r.title AS 'TITLE',
+        CONCAT('$', r.salary) AS 'SALARY',
+        CONCAT(m.first_name,' ',m.last_name) AS 'MANAGER'
+    FROM employee e
+    LEFT JOIN employee m
+        ON e.manager_id = m.id
+    LEFT JOIN role r
+        ON r.id = e.role_id
+    LEFT JOIN department d
+        ON d.id = r.department_id;`);
 }
 
 module.exports = {
