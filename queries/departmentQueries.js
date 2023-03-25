@@ -1,4 +1,4 @@
-const db = require('../connection');
+const db = require('../config/connection');
 
 // Header and query that displays all departments and their ID's
 function viewAllDepartments() {    

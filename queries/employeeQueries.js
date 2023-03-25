@@ -1,4 +1,4 @@
-const db = require('../connection');
+const db = require('../config/connection');
 
 // Header and query that displays all emplyees, their id, first name, last name, title, salary, department and manager if any
 function viewAllEmployees() {    

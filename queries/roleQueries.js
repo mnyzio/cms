@@ -1,4 +1,4 @@
-const db = require('../connection');
+const db = require('../config/connection');
 
 // Header and query that displays all roles, their id, title, salary and departments they belong to
 function viewAllRoles() {    
