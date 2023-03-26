@@ -66,27 +66,15 @@ function mainPrompt() {
       switch (main) {
 
         case 'View all departments':
-          db_viewAllDepartments().then(function (results) {
-            console.table(results[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-          }).catch(err => console.log(err));
+          viewAllDepartments();
           break;
 
         case 'View all roles':
-          db_viewAllRoles().then(function (results) {
-            console.table(results[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-          }).catch(err => console.log(err));
+          viewAllRoles();
           break;
 
         case 'View all employees':
-          db_viewAllEmployees().then(function (results) {
-            console.table(results[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-          }).catch(err => console.log(err));
+          viewAllEmployees();
           break;
 
         case 'Add a department':
@@ -106,28 +94,17 @@ function mainPrompt() {
           break;
 
         case 'View utilized budget - single department':
-          selectDepartmentPrompt().then(({ selectedDeptartment }) => {
-            db_utilizedBudgetSingleDepartment(selectedDeptartment).then(results => {
-              console.table(results[0]);
-              console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-              mainPrompt();
-            }).catch(err => console.log(err));
-          }).catch(err => console.log(err));
+          viewUtilizedBudget_Single();
           break;
+
         case 'View utilized budget - all departments':
-          db_utilizedBudgetAllDepartments().then(function (results) {
-            console.table(results[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-          }).catch(err => console.log(err));
+          viewUtilizedBudget_All();          
           break;
+
         case 'View utilized budget - total':
-          db_utilizedBudgetTotal().then(function (result) {
-            console.table(result[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-          }).catch(err => console.log(err));
+          viewUtilizedBudget_Total();                    
           break
+
         case 'Exit':
           process.exit();
       }
@@ -135,7 +112,26 @@ function mainPrompt() {
     .catch(err => console.log(err))
 }
 
+async function viewAllDepartments() {
+  const allDepartments = await db_viewAllDepartments();
+  console.table(allDepartments);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};
 
+async function viewAllRoles() {
+  const allRoles = await db_viewAllRoles();
+  console.table(allRoles);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+}
+
+async function viewAllEmployees() {
+  const allEmployees = await db_viewAllEmployees();
+  console.table(allEmployees);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};
 
 // Function that displays prompts for steps required to add new department 
 async function addDepartmentPrompt() {
@@ -172,7 +168,7 @@ async function addDepartmentPrompt() {
 // Function that displays available departments for user to select from
 async function selectDepartmentPrompt() {
   const validDepartments = await db_getDepartmentNames();
-  return inquirer
+  const { selectedDeptartment } = await inquirer
     .prompt([
       {
         type: 'list',
@@ -182,14 +178,14 @@ async function selectDepartmentPrompt() {
         choices: validDepartments
       }
     ])
+  return selectedDeptartment;
 }
-
 
 // Function that displays prompts for steps required to add a role
 async function addRolePrompt() {
   // anync function which runs query that returns array of department names
   const validDepartments = await db_getDepartmentNames();
-  const { roleName, roleSalary, roleDepartment } = await inquirer.prompt([
+  const { roleName, roleSalary } = await inquirer.prompt([
     {
       type: 'input',
       name: 'roleName',
@@ -199,15 +195,10 @@ async function addRolePrompt() {
       type: 'input',
       name: 'roleSalary',
       message: 'Enter salary for new role:'
-    },
-    {
-      type: 'list',
-      name: 'roleDepartment',
-      message: 'Select department new role belongs to:',
-      loop: false,
-      choices: validDepartments
     }
   ])
+
+  const roleDepartment = await selectDepartmentPrompt();
 
   try {
     if (roleName && roleSalary && roleDepartment) {
@@ -256,31 +247,52 @@ async function addEmployeePrompt() {
   mainPrompt();
 }
 
-
-async function updateEmployeeRole () {
+async function updateEmployeeRole() {
   const allEmployees = await db_getEmployees();
   const allRoles = await db_getRoles();
   const { selectedEmployee, selectedRole } = await inquirer
-  .prompt([
-    {
-      type: 'list',
-      name: 'selectedEmployee',
-      message: "Select employee:",
-      loop: false,
-      choices: allEmployees,
-    },
-    {
-      type: 'list',
-      name: 'selectedRole',
-      message: "Select new role:",
-      loop: false,
-      choices: allRoles,
-    },
-  ])
+    .prompt([
+      {
+        type: 'list',
+        name: 'selectedEmployee',
+        message: "Select employee:",
+        loop: false,
+        choices: allEmployees,
+      },
+      {
+        type: 'list',
+        name: 'selectedRole',
+        message: "Select new role:",
+        loop: false,
+        choices: allRoles,
+      },
+    ])
 
   db_updateEmployeeRole(selectedEmployee, selectedRole);
 
   mainPrompt();
 }
+
+async function viewUtilizedBudget_Single() {
+  const selectedDepartment = await selectDepartmentPrompt();
+  const utilizedBudget = await db_utilizedBudgetSingleDepartment(selectedDepartment);
+  console.table(utilizedBudget);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};
+
+async function viewUtilizedBudget_All() {
+  const utilizedBudget = await db_utilizedBudgetAllDepartments();
+  console.table(utilizedBudget);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};
+
+async function viewUtilizedBudget_Total() {
+  const utilizedBudget = await db_utilizedBudgetTotal();
+  console.table(utilizedBudget);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};          
 
 mainPrompt();

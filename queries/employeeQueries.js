@@ -23,7 +23,7 @@ function db_viewAllEmployees() {
     LEFT JOIN role r
         ON r.id = e.role_id
     LEFT JOIN department d
-        ON d.id = r.department_id;`);
+        ON d.id = r.department_id;`).then(results => results[0]);
 }
 
 // Query that add new employee to database

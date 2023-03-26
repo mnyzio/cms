@@ -14,7 +14,7 @@ function db_viewAllRoles() {
         concat('$',role.salary) AS SALARY 
     FROM role
     JOIN department ON role.department_id = department.id
-    ORDER BY department.name, role.title;`);
+    ORDER BY department.name, role.title;`).then(result => result[0]);
 }
 
 

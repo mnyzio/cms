@@ -7,7 +7,8 @@ function db_viewAllDepartments() {
 |                                             DEPARTMENTS                                          |
 +--------------------------------------------------------------------------------------------------+
     `)
-    return db.promise().query(`SELECT * FROM department ORDER BY name;`);
+    // return db.promise().query(`SELECT * FROM department ORDER BY name;`);
+    return db.promise().query(`SELECT id AS 'ID, name AS 'NAME' FROM department ORDER BY name;`).then(results => results[0]); 
 }
 
 
@@ -55,7 +56,7 @@ function db_utilizedBudgetSingleDepartment(department) {
     LEFT JOIN employee e 
         ON e.role_id = r.id
     WHERE d.name = ?
-    GROUP BY d.name`, department);
+    GROUP BY d.name`, department).then(result => result[0]);
 }
 
 
@@ -80,7 +81,7 @@ function db_utilizedBudgetAllDepartments() {
         ON e.role_id = r.id
     GROUP BY d.name
     ORDER BY d.name;
-    `)    
+    `).then(result => result[0])    
 }
 
 
@@ -101,7 +102,7 @@ function db_utilizedBudgetTotal() {
     FROM role r 
     LEFT JOIN employee e 
         ON r.id = e.role_id;
-    `)
+    `).then(result => result[0])
 }
 
 
