@@ -13,7 +13,7 @@ function viewAllDepartments() {
 
 // Function that returns anly department names
 function getDepartmentNames() {
-    return db.promise().query(`SELECT name FROM department ORDER BY name;`);
+    return db.promise().query(`SELECT name FROM department ORDER BY name;`).then( results => results[0].map(e => e.name));
 }
 
 

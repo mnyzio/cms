@@ -25,8 +25,13 @@ function addRole(title, salary, deptName) {
 }   
 
 
+function getRoles() {
+    return db.promise().query(`SELECT r.title FROM role r JOIN department d ON d.id = r.department_id ORDER BY r.title;`).then((results) => results[0].map(e => e.title));
+}
+
 
 module.exports = {
     viewAllRoles, 
     addRole,
+    getRoles,
 }

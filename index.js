@@ -1,31 +1,35 @@
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const showWelcomeScreen = require('./logo');
-const { 
-        viewAllDepartments,
-        getDepartmentNames,        
-        addDepartmentMenu,
-        addDepartment,
-        utilizedBudgetSingleDepartment,
-        utilizedBudgetAllDepartments,
-        utilizedBudgetTotal,
-      } = require('./queries/departmentQueries');
+const {
+  viewAllDepartments,
+  getDepartmentNames,
+  addDepartmentMenu,
+  addDepartment,
+  utilizedBudgetSingleDepartment,
+  utilizedBudgetAllDepartments,
+  utilizedBudgetTotal,
+} = require('./queries/departmentQueries');
 
 const {
-        viewAllRoles,
-        addRole,
-      } = require('./queries/roleQueries');
+  viewAllRoles,
+  addRole,
+  getRoles,
+} = require('./queries/roleQueries');
 
 const {
-        viewAllEmployees,
-      } = require('./queries/employeeQueries')
+  viewAllEmployees,
+  addEmployee,
+  getManagers,
+} = require('./queries/employeeQueries');
+const db = require('./config/connection');
 
 
 // Display logo on start
-showWelcomeScreen(); 
+showWelcomeScreen();
 
-function mainPrompt () {
-  console.log('\x1b[33m%s\x1b[0m',`
+function mainPrompt() {
+  console.log('\x1b[33m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                           MAIN MENU                                              |
 +--------------------------------------------------------------------------------------------------+
@@ -56,7 +60,7 @@ function mainPrompt () {
         ]
       }
     ])
-    .then( ({ main }) => {
+    .then(({ main }) => {
       switch (main) {
 
         case 'View all departments':
@@ -64,15 +68,15 @@ function mainPrompt () {
             console.table(results[0]);
             console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
-            }).catch(err => console.log(err));          
-          break;   
+          }).catch(err => console.log(err));
+          break;
 
         case 'View all roles':
           viewAllRoles().then(function (results) {
             console.table(results[0]);
             console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
-            }).catch(err => console.log(err)); 
+          }).catch(err => console.log(err));
           break;
 
         case 'View all employees':
@@ -80,69 +84,65 @@ function mainPrompt () {
             console.table(results[0]);
             console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
-            }).catch(err => console.log(err)); 
+          }).catch(err => console.log(err));
           break;
 
-        case 'Add a department':          
+        case 'Add a department':
           addDepartmentPrompt().then(({ newDepartment }) => {
-            getDepartmentNames().then(arrayOfDeptNames => {        
+            getDepartmentNames().then(arrayOfDeptNames => {
               let found = false;
               arrayOfDeptNames[0].forEach(element => {
-                if (element.name === newDepartment.toUpperCase()) {            
+                if (element.name === newDepartment.toUpperCase()) {
                   found = true;
                   return;
-                };          
-              });        
+                };
+              });
               if (found) {
-                console.log("\x1b[31m%s\x1b[0m", `\n Department '${newDepartment.toUpperCase()}' already exists. Operation could not be completed. \n`);            
+                console.log("\x1b[31m%s\x1b[0m", `\n Department '${newDepartment.toUpperCase()}' already exists. Operation could not be completed. \n`);
               } else {
-                addDepartment(newDepartment);          
-                console.log(`Department ${newDepartment} added successfully.`);    
-                console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")              
+                addDepartment(newDepartment);
+                console.log(`Department ${newDepartment} added successfully.`);
+                console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
               }
               mainPrompt();
             })
-          });              
+          });
           break;
 
         case 'Add a role':
-          addRolePrompt().then( ({ roleName, roleSalary, roleDepartment }) => {
-            if (roleName && roleSalary && roleDepartment) {
-              addRole(roleName, parseInt(roleSalary), roleDepartment);              
-              console.log(`Role ${roleName} added successfully.`);    
-            } else {
-              console.log("\x1b[31m%s\x1b[0m", "\n Provided information was not complete. Operation could not be completed. \n")
-            };            
-            mainPrompt();
-          }).catch(err => console.log(err));                    
+          addRolePrompt();                            
+          break;
+
+        case 'Add an employee':
+          addEmployeePrompt();
           break;
 
         case 'View utilized budget of a department - single department':
-          selectDepartmentPrompt().then(({selectedDeptartment}) => {
+          selectDepartmentPrompt().then(({ selectedDeptartment }) => {
             utilizedBudgetSingleDepartment(selectedDeptartment).then(results => {
-            console.table(results[0]);
-            console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
-            mainPrompt();
-            }).catch(err => console.log(err));                    
-          }).catch(err => console.log(err));                    
-          break;        
+              console.table(results[0]);
+              console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+              mainPrompt();
+            }).catch(err => console.log(err));
+          }).catch(err => console.log(err));
+          break;
         case 'View utilized budget - all departments':
-          utilizedBudgetAllDepartments().then(function(results) {
+          utilizedBudgetAllDepartments().then(function (results) {
             console.table(results[0]);
             console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
-          }).catch(err => console.log(err));          
+          }).catch(err => console.log(err));
           break;
         case 'View utilized budget - total':
-          utilizedBudgetTotal().then(function(result) {
+          utilizedBudgetTotal().then(function (result) {
             console.table(result[0]);
             console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
             mainPrompt();
-          }).catch(err => console.log(err));          
+          }).catch(err => console.log(err));
           break
         case 'Exit':
           process.exit();
-      }         
+      }
     })
     .catch(err => console.log(err))
 }
@@ -151,7 +151,7 @@ function mainPrompt () {
 
 
 async function addDepartmentPrompt() {
-  await addDepartmentMenu();  
+  await addDepartmentMenu();
   return inquirer
     .prompt([
       {
@@ -159,13 +159,13 @@ async function addDepartmentPrompt() {
         name: 'newDepartment',
         message: 'Enter department name:',
       }
-    ])    
-}      
+    ])
+}
 
 // Function that displays available departments for user to select from
 async function selectDepartmentPrompt() {
   const arrayOfDeptNames = await getDepartmentNames();
-  const validDepartments = arrayOfDeptNames[0].map(e => e);
+  const validDepartments = arrayOfDeptNames[0].map(e => e.name);
   return inquirer
     .prompt([
       {
@@ -181,30 +181,76 @@ async function selectDepartmentPrompt() {
 
 // Function that displays prompts for steps required to add a role
 async function addRolePrompt() {
+  // anync function which runs query that returns array of department names
   const arrayOfDeptNames = await getDepartmentNames();
-  const validDepartments = arrayOfDeptNames[0].map(e => e);
-  return inquirer
+  const validDepartments = arrayOfDeptNames[0].map(e => e.name);
+  const { roleName, roleSalary, roleDepartment } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'roleName',
+      message: 'Enter title for new role:',
+    },
+    {
+      type: 'input',
+      name: 'roleSalary',
+      message: 'Enter salary for new role:'
+    },
+    {
+      type: 'list',
+      name: 'roleDepartment',
+      message: 'Select department new role belongs to:',
+      loop: false,
+      choices: validDepartments
+    }
+  ])
+
+  try {
+    if (roleName && roleSalary && roleDepartment) {
+      await addRole(roleName, parseInt(roleSalary), roleDepartment);
+      console.log(`Role ${roleName} added successfully.`);
+    } else {
+      console.log("\x1b[31m%s\x1b[0m", "\n Provided information was not complete. Operation could not be completed. \n")
+    };
+    mainPrompt();
+  }
+  catch (err) { console.log(err) };
+}
+
+
+async function addEmployeePrompt() {
+  const validRoles = await getRoles();
+  const validManagers = await getManagers();
+  const { firstName, lastName, employeeRoleTitle, employeeManagerName } = await inquirer
     .prompt([
       {
         type: 'input',
-        name: 'roleName',
-        message: 'Enter title for new role:',        
+        name: 'firstName',
+        message: "Enter new employee's first name:",
       },
       {
         type: 'input',
-        name: 'roleSalary',
-        message: 'Enter salary for new role:'
+        name: 'lastName',
+        message: "Enter new employee's last name:",
       },
       {
         type: 'list',
-        name: 'roleDepartment',
-        message: 'Select department new role belongs to:',
+        name: 'employeeRoleTitle',
+        message: 'Select department new employee will belong to:',
         loop: false,
-        choices: validDepartments
+        choices: validRoles,
+      },
+      {
+        type: 'list',
+        name: 'employeeManagerName',
+        message: `Select new employee's manager:`,
+        loop: false,
+        choices: validManagers,
       }
     ])
+  await addEmployee(firstName, lastName, employeeRoleTitle, employeeManagerName);
+  mainPrompt();
+    
 }
-
 
 
 mainPrompt();

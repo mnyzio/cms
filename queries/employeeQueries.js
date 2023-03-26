@@ -26,6 +26,31 @@ function viewAllEmployees() {
         ON d.id = r.department_id;`);
 }
 
+// Query that add new employee to database
+function addEmployee(firstName, lastName, roleTitleName, managerName) {
+    // Separate first and last name
+    const manager = managerName.split(' ');
+    db.query(`
+    INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES (?, ?, 
+        (SELECT r.id FROM role r WHERE r.title = ?), 
+        (SELECT e.id FROM employee e WHERE e.first_name = ? AND e.last_name = ?))`, 
+        [firstName.toUpperCase(), lastName.toUpperCase(), roleTitleName, manager[0], manager[1]]);
+}
+
+// Query that returns first and last name as a single array element of each employee that has manager in job title or does not have manager assigned
+function getManagers() {
+    return db.promise().query(`
+    SELECT CONCAT(e.first_name,' ',e.last_name) AS name 
+    FROM employee e
+    LEFT JOIN role r 
+        ON e.role_id = r.id
+    WHERE e.manager_id IS NULL 
+    OR r.title LIKE '%MANAGER%';`).then((results) => results[0].map(e => e.name));
+}
+
 module.exports = {
     viewAllEmployees,
+    addEmployee,
+    getManagers,
 }
