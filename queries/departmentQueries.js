@@ -1,7 +1,7 @@
 const db = require('../config/connection');
 
 // Header and query that displays all departments and their ID's
-function viewAllDepartments() {    
+function db_viewAllDepartments() {    
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                             DEPARTMENTS                                          |
@@ -12,13 +12,13 @@ function viewAllDepartments() {
 
 
 // Function that returns anly department names
-function getDepartmentNames() {
+function db_getDepartmentNames() {
     return db.promise().query(`SELECT name FROM department ORDER BY name;`).then( results => results[0].map(e => e.name));
 }
 
 
 // Header and query that displays all emplyees, their id, first name, last name, title, salary, department and manager if any
-function addDepartmentMenu() {    
+function db_addDepartmentMenu() {    
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                     ADD NEW DEPARTMENT MENU                                      |
@@ -28,7 +28,7 @@ function addDepartmentMenu() {
 
 
 // Function that adds new department to database
-function addDepartment(department) {
+function db_addDepartment(department) {
     db.query(`
     INSERT INTO department (name)
     VALUES (?)`, department.toUpperCase());
@@ -36,7 +36,7 @@ function addDepartment(department) {
 
 
 // Function that sums up all salaries for a single department
-function utilizedBudgetSingleDepartment(department) {
+function db_utilizedBudgetSingleDepartment(department) {
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                              UTILIZED BUDGET - SINGLE DEPARTMENT                                 |
@@ -60,7 +60,7 @@ function utilizedBudgetSingleDepartment(department) {
 
 
 // Function that sums up all salaries per department
-function utilizedBudgetAllDepartments() {
+function db_utilizedBudgetAllDepartments() {
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                               UTILIZED BUDGET - ALL DEPARTMENTS                                  |
@@ -85,7 +85,7 @@ function utilizedBudgetAllDepartments() {
 
 
 // Function that total utilized budget
-function utilizedBudgetTotal() {
+function db_utilizedBudgetTotal() {
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                     UTILIZED BUDGET - TOTAL                                      |
@@ -108,13 +108,13 @@ function utilizedBudgetTotal() {
 
 
 module.exports = {
-    viewAllDepartments, 
-    getDepartmentNames, 
-    addDepartmentMenu,
-    addDepartment, 
-    utilizedBudgetSingleDepartment,
-    utilizedBudgetAllDepartments,
-    utilizedBudgetTotal,
+    db_viewAllDepartments, 
+    db_getDepartmentNames, 
+    db_addDepartmentMenu,
+    db_addDepartment, 
+    db_utilizedBudgetSingleDepartment,
+    db_utilizedBudgetAllDepartments,
+    db_utilizedBudgetTotal,
 };
 
 

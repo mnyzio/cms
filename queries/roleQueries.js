@@ -1,7 +1,7 @@
 const db = require('../config/connection');
 
 // Header and query that displays all roles, their id, title, salary and departments they belong to
-function viewAllRoles() {    
+function db_viewAllRoles() {    
     console.log('\x1b[32m%s\x1b[0m', `
 +--------------------------------------------------------------------------------------------------+
 |                                               ROLES                                              |
@@ -18,20 +18,24 @@ function viewAllRoles() {
 }
 
 
-function addRole(title, salary, deptName) {
+function db_addRole(title, salary, deptName) {
     db.query(`INSERT INTO role (title, salary, department_id) 
     VALUES
-        (?, ?, (SELECT id FROM department WHERE name = ?))`, [title, salary, deptName]);
+        (?, ?, (SELECT id FROM department WHERE name = ?))`, [title.toUpperCase(), salary, deptName]);
 }   
 
 
-function getRoles() {
+function db_getRoles() {
     return db.promise().query(`SELECT r.title FROM role r JOIN department d ON d.id = r.department_id ORDER BY r.title;`).then((results) => results[0].map(e => e.title));
 }
 
+function db_updateEmployeeRole() {
+
+}
 
 module.exports = {
-    viewAllRoles, 
-    addRole,
-    getRoles,
+    db_viewAllRoles, 
+    db_addRole,
+    db_getRoles,
+    db_updateEmployeeRole,
 }
