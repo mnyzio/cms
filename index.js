@@ -9,6 +9,7 @@ const {
   db_utilizedBudgetSingleDepartment,
   db_utilizedBudgetAllDepartments,
   db_utilizedBudgetTotal,
+  db_deleteDepartment,
 } = require('./queries/departmentQueries');
 
 const {
@@ -23,6 +24,8 @@ const {
   db_getManagers,
   db_getEmployees,
   db_updateEmployeeRole,
+  db_viewEmployeesByDepartment,
+  db_viewEmployeesByManager,
 } = require('./queries/employeeQueries');
 const db = require('./config/connection');
 
@@ -48,18 +51,19 @@ function mainPrompt() {
           'View all roles',
           'View all employees',
           'Add a department',
-          'Add a role',
+          'Delete depertment',
+          'Add a role',          
           'Add an employee',
-          'Update an employee role',
-          'Update employee managers - bonus 2 points',
-          'View employees by manager - bonus 2 points',
-          'View employees by department - bonus 2 points',
-          'Delete departments, roles, and employees - bonus 2 points each',
+          'Update employee role',          
+          'View employees by department',
+          'View employees by manager',
           'View utilized budget - single department',
           'View utilized budget - all departments',
           'View utilized budget - total',
           'Exit'
         ]
+        // 'Update employee managers - bonus 2 points',      
+        // 'Delete roles, and employees - bonus 2 points each',
       }
     ])
     .then(({ main }) => {
@@ -81,16 +85,28 @@ function mainPrompt() {
           addDepartmentPrompt();
           break;
 
+        case 'Delete depertment':
+          deleteDepartmentPrompt();
+          break;
+
         case 'Add a role':
           addRolePrompt();
-          break;
+          break;       
 
         case 'Add an employee':
           addEmployeePrompt();
           break;
 
-        case 'Update an employee role':
+        case 'Update employee role':
           updateEmployeeRole();
+          break;
+
+        case 'View employees by department':
+          viewEmployeesByDepartment();
+          break;
+
+        case 'View employees by manager':
+          viewEmployeesByManager();
           break;
 
         case 'View utilized budget - single department':
@@ -164,6 +180,33 @@ async function addDepartmentPrompt() {
   }
   mainPrompt();
 }
+
+async function deleteDepartmentPrompt() {
+  const validDepartments = await db_getDepartmentNames();
+  const { selectedDepartment } = await inquirer
+  .prompt([
+    {
+      type: 'list',
+      name: 'selectedDepartment',
+      message: 'Select department you would like to delete:',
+      loop: false,
+      choices: validDepartments,
+    },    
+  ])
+
+  // Get confirmation from user
+  const confirmation = await getConfirmation();
+
+  if (confirmation) {
+    await db_deleteDepartment(selectedDepartment);  
+    // Display confirmation to user
+    console.log("\x1b[32m%s\x1b[0m", `Department ${selectedDepartment} deleted successfully.`);
+    console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")  
+  } else {
+    console.log("\x1b[31m%s\x1b[0m", `\n Operation canceled. \n`);
+  }
+  mainPrompt();
+};
 
 // Function that displays available departments for user to select from
 async function selectDepartmentPrompt() {
@@ -267,11 +310,38 @@ async function updateEmployeeRole() {
         choices: allRoles,
       },
     ])
-
+  
   db_updateEmployeeRole(selectedEmployee, selectedRole);
 
   mainPrompt();
 }
+
+
+async function viewEmployeesByDepartment() {
+  const selectedDepartment = await selectDepartmentPrompt();
+  const employees = await db_viewEmployeesByDepartment(selectedDepartment);
+  console.table(employees);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+}
+
+async function viewEmployeesByManager() {
+  const managers = await db_getManagers();
+  const { selectedManager } = await inquirer
+  .prompt([
+    {
+      type: 'list',
+      name: 'selectedManager',
+      message: "Select manager:",
+      loop: false,
+      choices: managers,
+    }
+  ])
+  const employees = await db_viewEmployeesByManager(selectedManager);
+  console.table(employees);
+  console.log("\x1b[32m%s\x1b[0m", "\n Request completed without errors. \n")
+  mainPrompt();
+};
 
 async function viewUtilizedBudget_Single() {
   const selectedDepartment = await selectDepartmentPrompt();
@@ -295,4 +365,15 @@ async function viewUtilizedBudget_Total() {
   mainPrompt();
 };          
 
+// Function that askes user to confirm his action and sends back user's response
+async function getConfirmation() {
+  return inquirer
+  .prompt([
+    {
+      type: 'confirm',
+      name: 'confirmation',
+      message: 'Please confirm delete:',
+    }
+  ]).then(({confirmation}) => confirmation);
+}
 mainPrompt();

@@ -49,22 +49,45 @@ function db_getManagers() {
     OR r.title LIKE '%MANAGER%';`).then((results) => results[0].map(e => e.name));
 }
 
-
+// SELECT id AS value, CONCAT(first_name,' ',last_name) AS name from employee;    
 function db_getEmployees() {
     return db.promise().query(`
     SELECT CONCAT(first_name,' ',last_name) AS name from employee;
     `).then(results => results[0].map(e => e.name));
 }
-
+// `).then(results => results[0].map(e => ({name: e.name, value: e.value})));
 
 function db_updateEmployeeRole(employee, role) {
-    employee = employee.split(' ');
-    console.log("🚀 ~ file: employeeQueries.js:62 ~ db_updateEmployeeRole ~ employee:", employee)
-    
+    employee = employee.split(' ');    
     db.query(`
     UPDATE employee
     SET role_id = (SELECT id FROM role WHERE title = ?)
     WHERE first_name = ? AND last_name = ?`, [role, employee[0], employee[1]]);
+}
+
+function db_viewEmployeesByDepartment(department) {
+    return db.promise().query(`
+    SELECT e.first_name AS 'FIRST NAME', e.last_name AS 'LAST NAME', r.title 
+    FROM employee e
+    JOIN role r 
+        ON e.role_id = r.id
+    JOIN department d
+        ON d.id = r.department_id
+    WHERE d.name = ?
+    `, department).then(results => results[0]);
+}
+
+function db_viewEmployeesByManager(manager) {
+    manager = manager.split(' ');
+    return db.promise().query(`
+    SELECT e.first_name AS 'FIRST NAME', e.last_name AS 'LAST NAME', r.title AS TITLE, d.name AS DEPARTMENT 
+    FROM employee e
+    JOIN role r
+        ON r.id = e.role_id
+    JOIN department d
+        ON d.id = r.department_id
+    WHERE manager_id = (SELECT id FROM employee WHERE first_name = ? AND last_name = ?)
+    `, [manager[0], manager[1]]).then(results => results[0]);
 }
 
 module.exports = {
@@ -73,4 +96,6 @@ module.exports = {
     db_getManagers,
     db_getEmployees,
     db_updateEmployeeRole,
+    db_viewEmployeesByDepartment,
+    db_viewEmployeesByManager,
 }

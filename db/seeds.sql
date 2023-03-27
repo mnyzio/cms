@@ -6,7 +6,7 @@ VALUES
     ('HUMAN RESOURCES'),    
     ('SALES'),              
     ('IT'),                 
-    ('PPRODUCT MANAGEMENT'),
+    ('PRODUCT MANAGEMENT'),
     ('MANUFACTURING'),      
     ('DISTRIBUTION');       
 

@@ -8,7 +8,7 @@ function db_viewAllDepartments() {
 +--------------------------------------------------------------------------------------------------+
     `)
     // return db.promise().query(`SELECT * FROM department ORDER BY name;`);
-    return db.promise().query(`SELECT id AS 'ID, name AS 'NAME' FROM department ORDER BY name;`).then(results => results[0]); 
+    return db.promise().query(`SELECT id AS 'ID', name AS 'NAME' FROM department ORDER BY name;`).then( ([results]) => results); 
 }
 
 
@@ -105,7 +105,11 @@ function db_utilizedBudgetTotal() {
     `).then(result => result[0])
 }
 
-
+function db_deleteDepartment(department) {
+    console.log("🚀 ~ file: departmentQueries.js:109 ~ db_deleteDepartment ~ department:", department)
+    db.query(`
+    DELETE FROM department WHERE name = ?`, department);
+}
 
 
 module.exports = {
@@ -116,6 +120,7 @@ module.exports = {
     db_utilizedBudgetSingleDepartment,
     db_utilizedBudgetAllDepartments,
     db_utilizedBudgetTotal,
+    db_deleteDepartment,
 };
 
 
