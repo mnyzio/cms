@@ -6,8 +6,7 @@ USE employee_management_db;
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(30) NOT NULL,
-    PRIMARY KEY(id),
-    ON DELETE SET NULL
+    PRIMARY KEY(id) 
 );
 
 CREATE TABLE role (
@@ -28,6 +27,5 @@ CREATE TABLE employee (
     manager_id INT,
     PRIMARY KEY(id),
     FOREIGN KEY(role_id) REFERENCES role(id),
-    FOREIGN KEY(manager_id) REFERENCES employee(id),
-    ON DELETE SET NULL
+    FOREIGN KEY(manager_id) REFERENCES employee(id)
 );
