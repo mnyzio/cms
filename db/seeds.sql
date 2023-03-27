@@ -37,7 +37,10 @@ VALUES
     ('RICK', 'JONES', 1, 1),               
     ('JEFF', "TWAIN", 2, 1),               
     ('ALBERT','SMITH', 3, null),           
-    ('JESSICA', 'OSWELL', 4, 4)            
+    ('JESSICA', 'OSWELL', 4, 4),   
+    ('SARA','MARTINEZ', 5, null),
+    ('JASON','GARCIA', 7, null),         
+    ('ANTHONY','SMITH', 6, 7);
 
 
 
