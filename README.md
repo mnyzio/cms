@@ -2,12 +2,10 @@
 
 [![License](https://img.shields.io/badge/License-MIT_License-green)](#license)
 ## Description
-This app works in node.js and uses inquirer npm to take responses from the user based on which the logo will be created.
-Additionally app uses tinycolor npm to validate user responses for shape and text colors.
+This app works in node.js and uses inquirer npm to take responses from the user based on which mySQL queries are performed. 
 
-I build this project to help automate the process of creating SVG logos for users.
-My main focus for this app was to gain more experiance and hands on practice with OOP. 
-In this app my priority was to use objects, classes, methods, attributes and getting better understaning on ideas of encapsulation, abstraction, inheritance and ploymorphism.
+I build this project to help users manage employees, their roles, department, salary and mangers.
+My main focus for this app was to gain more experience and hands on practice with mySQL. 
 
 ## Table of Contents
 - [CMS - Content Management System / Employee Management System](#cms---content-management-system--employee-management-system)
@@ -15,6 +13,7 @@ In this app my priority was to use objects, classes, methods, attributes and get
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
       - [Link to GitHub Repo](#link-to-github-repo)
+  - [mySQL initial setup](#mysql-initial-setup)
   - [Usage](#usage)
   - [Contributors](#contributors)
   - [License:](#license)
@@ -30,8 +29,27 @@ This project runs in node.js
 #### Link to GitHub Repo
 [https://github.com/mnyzio/cms](https://github.com/mnyzio/cms)
 
+## mySQL initial setup
+For application to be able to run database needs to be created using 'schema.sql' file located in 'db' folder. 
 ## Usage
-Once run user will be prompted questions regarding shape, shape color, text and text color for his/her SVG logo. Responses will be verified and if no errors are triggered user will be presented with logo.svg.
+
+Once the application is loaded user will be presented with menu including a list of actions to choose from. 
+
+Below are options available to user in this release:
+- View all departments
+- View all roles
+- View all employees
+- Add department
+- Delete depertment
+- Add role
+- Add employee
+- Update employee role
+- View employees by department
+- View employees by manager
+- View utilized budget - single department
+- View utilized budget - all departments
+- View utilized budget - total
+
 ## Contributors
 Mirek Nyzio
 ## License:
@@ -44,6 +62,7 @@ Mirek Nyzio
 
 ## Mock-up
 !["Main Image"](./img/main.png)
+
 !["Employee Image](./img/emloyees.png)
 
 ## Walkthrough Video
